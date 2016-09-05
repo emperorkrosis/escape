@@ -66,11 +66,10 @@ class HeadThread (threading.Thread):
 
 
 """
-Class for receiving compressed vocal audio data and playing it.
+Class for playing audio clues for the talking head.
 
-The audio sampling rate is 11.025 kHz, which is sufficient for human voice.
-The audio is encoded as signed 16-bit fixed point numbers, mapped from the
-floating point range [-1.5, 1.5].
+The audio clues are simple wave files that have been pre-recorded and
+pitch-shifted. We use the pyaudio library to play these sounds.
 """
 class AudioThread (threading.Thread):
   def __init__(self, threadId, name, audio, state):

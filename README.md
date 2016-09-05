@@ -91,4 +91,11 @@ The following diagram shows the basic setup of how the command and control serve
 ```
 
 ### Talking Head
-This will be uploaded at a later date.
+We built a creepy doll that we wanted to communicate with the puzzlers in some way. The original intention with the talking head puzzle was to build a sort of walkie-talkie with pitch shifting to give the talking head a creepy voice and then play a game of 20-questions with the puzzlers. In the end we ran out of time to fully implement this so we ended up with a three part puzzle that the talking head spoke out loud.
+
+In order to get the audio clues the puzzlers first needed to activate the talking head. This was accomplished by inserting a special "vial" into a slot on the talking head. This vial contained a magnet that activated a reed switch. The switch was attached to an arduino that would then essentially "power-up" the robot (screenshot of the circuit to be added later).
+
+Once the head was powered up it would start to play the audio clues. There were three clues: "the 21st letter of the alphabet", "when you siege a castle you use a battering...what?", and "if you are running from the law you are on the what?". The answers are then "U", "ram", and "lam", which are homophones for "ewe", "ram", and "lamb"...all types of "sheep". Sheep was the answer to this part of the puzzle room.
+
+The head/ subdirectory of this project contains the code for the talking head puzzle. The pitchshifter/ directory contains a webpage using HTML5Audio in order to record audio clips, apply a pitch shift, and then generate a WAV file. The sounds/ subdirectory contains all the audio clips used for the talking head. The file record_server.py was running on a Windows Intel Atom mini-PC. It's job is to listen for when the arduino signals (via serial port) that it has been activated and then to play all the clue clips via some hidden speakers. The talking_head.ino file is the arduino code that runs the talking head.
+
