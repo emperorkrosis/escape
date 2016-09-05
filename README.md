@@ -11,14 +11,48 @@ This repository contains code for two different components of the puzzle escape 
 
 ### Computer Terminal Inteface
 
-The code implements a fairly simple state machine...
+The code implementing the computer interface is a fairly simple state
+machine as seen below:
 
 ```
-SCAN  ACCESS
-      DENIED
-
-EYE GOOD EYE BAD
+ START   +----------------+
+   |     |                |
+   V     V                |
++----------+   +--------+ |
+| EYE SCAN |<--| ACCESS | |
++----------+   | DENIED | |
+     |      \  +--------+ |
+     |       \      ^     |
+     V        V     |     |
++----------+  +---------+ |
+| EYE GOOD |  | EYE BAD | |
++----------+  +---------+ |
+     |                    |
+     V                    |
++----------+   +--------+ |
+| PASSWORD |<--| ACCESS | |
+|          |-->| DENIED | |
++----------+   +--------+ |
+     |                    |
+     V                    |
++-----------+             /
+|  ACCESS   |            /
+| ANIMATION |           /
++-----------+          /
+     |                /
+     V               /
++-----------+       /
+| REPLICANT |      / RESET
+|  DOSSIER  |     /
++-----------+    /
+     |          /
+     V         /
++---------+   /
+| SUCCESS |--+
++---------+
 ```
+
+The computer interface was designed to interoperate with two other pieces of hardware. First there was a retina scanner. The retina scanner was powered by an arduino with a magnet sensor that could detect when a specially created fake eyeball was placed on the sensor. This eyeball would then trigger the terminal to advance to the password screen.
 
 The following diagram shows the basic setup of how the command and control server would work to wizard-of-oz the interface.
 
