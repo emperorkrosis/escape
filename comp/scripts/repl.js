@@ -2,16 +2,15 @@
  * The replicant dossier scene.
  * @param {number} w The width of the screen buffer for this scene.
  * @param {number} h The height of the screen buffer for this scene.
- * @param {Function} tFunc Transition function to call to change states.
  * @implements {Scene}
  * @constructor
  */
-ReplicantScene = function(w, h, tFunc, startStateName) {
+ReplicantScene = function(w, h) {
   /**
    * The function to invoke when transitioning to a new state.
    * @private {Function}
    */
-  this.transitionFunc_ = tFunc;
+  this.transitionFunc = null;
 
   /**
    * Animation time for this scene visit.
@@ -36,14 +35,8 @@ ReplicantScene = function(w, h, tFunc, startStateName) {
   this.initialized_ = false;
 
   /**
-   * The name of the start state to return to.
-   * @private {string}
-   */
-  this.startStateName_ = startStateName;
-
-  /**
    * Crane image of the dossier.
-   * TODO(cmprince): We don't wait for the image to load.
+   * TODO: We don't wait for the image to load.
    * @private {HTMLImageElement}
    */
   this.craneImg_ = document.createElement('img');
@@ -115,12 +108,14 @@ ReplicantScene.prototype.handleInterval = function() {
  * @override
  */
 ReplicantScene.prototype.handleKeyDown = function(e) {
-  // Adding emergency key '\' to return to the start state.
   var charCode = (typeof e.which == 'number') ? e.which : e.keyCode;
-  if (charCode == 220) {
-    this.transitionFunc_(this.startStateName_);
-    this.count_ = 0;
-    this.drawInternal_();
+  // When debugging 'P' and 'p' will override the hat flag being triggered.
+  if (Constants.DEBUGGING) {
+    if (charCode == 16 || charCode == 80) {
+      this.transitionFunc('success');
+      this.count_ = 0;
+      this.drawInternal_();
+    }
   }
   return true;
 };
@@ -213,7 +208,7 @@ ReplicantScene.prototype.drawInternal_ = function() {
                     20, 110, cImg.width, cImg.height);
     }
 
-    // TODO(cmprince): Maybe draw the blinking overlay.
+    // Maybe draw the blinking overlay.
     if (this.count_ == 45) {
       var r = '############################';
       var s = '##                        ##';

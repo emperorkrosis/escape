@@ -10,6 +10,7 @@
 <script src="scripts/denied.js"></script>
 <script src="scripts/access.js"></script>
 <script src="scripts/repl.js"></script>
+<script src="scripts/success.js"></script>
 <!-- End state definitions. -->
 <!-- Base should be last since it is the entry point for the app. -->
 <script src="scripts/base.js"></script>
@@ -39,9 +40,19 @@ body {
 <canvas id="a" width="800" height="600"></canvas>
 </div>
 <script>
-//start('a');
 var g = new Game('a');
-g.start();
+// Add all the state machine state.
+g.addScene(new ScanScene(320, 200));
+g.addScene(new EyeBadScene(320, 200, false));
+g.addScene(new DeniedScene(320, 200, 'denied1', 'scan'));
+g.addScene(new EyeBadScene(320, 200, true));
+g.addScene(new LoginScene(320, 200));
+g.addScene(new DeniedScene(320, 200, 'denied2', 'login'));
+g.addScene(new AccessScene(320, 200));
+g.addScene(new ReplicantScene(320, 200));
+g.addScene(new SuccessScene(320, 200, Constants.START_STATE));
+// Start the machine.
+g.start(Constants.START_STATE);
 </script>
 </body>
 </html>

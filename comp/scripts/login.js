@@ -2,16 +2,15 @@
  * The login screen scene.
  * @param {number} w The width of the screen buffer for this scene.
  * @param {number} h The height of the screen buffer for this scene.
- * @param {Function} tFunc Transition function to call to change states.
  * @implements {Scene}
  * @constructor
  */
-LoginScene = function(w, h, tFunc) {
+LoginScene = function(w, h) {
   /**
    * The function to invoke when transitioning to a new state.
    * @private {Function}
    */
-  this.transitionFunc_ = tFunc;
+  this.transitionFunc = null;
 
   /**
    * The set of character that make up the username and password. We hardcode
@@ -92,9 +91,9 @@ LoginScene.prototype.handleInterval = function() {
   if (this.chars_.length == 16) {
     var result = this.chars_.join('');
     if (result === 'HARLANH123456789') {
-      this.transitionFunc_('access');
+      this.transitionFunc('access');
     } else {
-      this.transitionFunc_('denied2');
+      this.transitionFunc('denied2');
     }
     this.chars_ = ['H', 'A', 'R', 'L', 'A', 'N', 'H', '1'];
     this.lastStr_ = null;

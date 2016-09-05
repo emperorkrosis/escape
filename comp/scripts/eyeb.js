@@ -2,18 +2,17 @@
  * The retinal scan scene.
  * @param {number} w The width of the screen buffer for this scene.
  * @param {number} h The height of the screen buffer for this scene.
- * @param {Function} tFunc Transition function to call to change states.
  * @param {boolean} isGood Whether this instance represents a successful
  *     retinal scan or not.
  * @implements {Scene}
  * @constructor
  */
-EyeBadScene = function(w, h, tFunc, isGood) {
+EyeBadScene = function(w, h, isGood) {
   /**
    * The function to invoke when transitioning to a new state.
    * @private {Function}
    */
-  this.transitionFunc_ = tFunc;
+  this.transitionFunc = null;
 
   /**
    * If true this scene represents the success state for the iris scanner.
@@ -105,9 +104,9 @@ EyeBadScene.prototype.handleInterval = function() {
   // The entire animation runs for 35 ticks.
   if (this.count_ > 35) {
     if (this.isGood_) {
-      this.transitionFunc_('login');
+      this.transitionFunc('login');
     } else {
-      this.transitionFunc_('denied1');
+      this.transitionFunc('denied1');
     }
     this.count_ = 0;
     this.imageIndex_ = -1;

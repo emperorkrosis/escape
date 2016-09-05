@@ -2,16 +2,15 @@
  * The retinal scan prompt screen scene.
  * @param {number} w The width of the screen buffer for this scene.
  * @param {number} h The height of the screen buffer for this scene.
- * @param {Function} tFunc Transition function to call to change states.
  * @implements {Scene}
  * @constructor
  */
-ScanScene = function(w, h, tFunc) {
+ScanScene = function(w, h) {
   /**
    * The function to invoke when transitioning to a new state.
    * @private {Function}
    */
-  this.transitionFunc_ = tFunc;
+  this.transitionFunc = null;
 
   /**
    * The drawing buffer. Each scene is responsible for updating it's
@@ -82,13 +81,14 @@ ScanScene.prototype.handleInterval = function() {
  */
 ScanScene.prototype.handleKeyDown = function(e) {
   var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
-  // 'P' and 'p' are the only keys that suceed.
+  // When debugging 'P' or 'p' will trigger a successful scan and any other
+  // key will trigger an unsuccessful scan.
   if (Constants.DEBUGGING) {
     if (charCode == 16 || charCode == 80) {
-      this.transitionFunc_('eyeg');
+      this.transitionFunc('eyeg');
       this.active_ = false;
     } else {
-      this.transitionFunc_('eyeb');
+      this.transitionFunc('eyeb');
       this.active_ = false;
     }
     this.drawInternal_();
@@ -159,7 +159,7 @@ ScanScene.prototype.handleResponse_ = function() {
     if (this.xhr_.status == 200) {
       data = JSON.parse(this.xhr_.responseText);
       if (data['ret']) {
-        this.transitionFunc_('eyeg');
+        this.transitionFunc('eyeg');
 	this.active_ = false;
         this.drawInternal_();
       }

@@ -102,7 +102,7 @@ class RetinaThread (threading.Thread):
 
     # Read the retina state.
     while self.exitFlag is not True:
-      # TODO(cmprince): Read the state of the retina scanner.
+      # TODO: Read the state of the retina scanner.
       # self.state.retinaValid = True
       time.sleep(0.5)
     self.logger.append("Exiting " + self.name)
@@ -137,7 +137,7 @@ class HatThread (threading.Thread):
     # Maybe tell the hat to start.
     while self.exitFlag is not True:
       if self.state.hatActive is True:
-        # TODO(cmprince): Activate the hat.
+        # TODO: Activate the hat.
         pass
       time.sleep(0.5)
     self.logger.append("Exiting " + self.name)

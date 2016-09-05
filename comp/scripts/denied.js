@@ -2,19 +2,18 @@
  * The access denied scene.
  * @param {number} w The width of the screen buffer for this scene.
  * @param {number} h The height of the screen buffer for this scene.
- * @param {Function} tFunc Transition function to call to change states.
  * @param {string} name The name of this node in the state machine.
  * @param {string} success The name of the node to transition too after the
  *     access denied animation.
  * @implements {Scene}
  * @constructor
  */
-DeniedScene = function(w, h, tFunc, name, success) {
+DeniedScene = function(w, h, name, success) {
   /**
    * The function to invoke when transitioning to a new state.
    * @private {Function}
    */
-  this.transitionFunc_ = tFunc;
+  this.transitionFunc = null;
 
   /**
    * Whether the access denied text is visible or not.
@@ -84,7 +83,7 @@ DeniedScene.prototype.handleInterval = function() {
     // Handle transition.
     this.largeCount_ -= 1;
     if (this.largeCount_ < 0) {
-      this.transitionFunc_(this.success_);
+      this.transitionFunc(this.success_);
       this.largeCount_ = 10;
     }
   }

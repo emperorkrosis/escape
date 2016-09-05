@@ -2,15 +2,14 @@
  * The bootup access scene.
  * @param {number} w The width of the screen buffer for this scene.
  * @param {number} h The height of the screen buffer for this scene.
- * @param {Function} tFunc Transition function to call to change states.
  * @implements {Scene}
  * @constructor
  */
-AccessScene = function(w, h, tFunc) {
+AccessScene = function(w, h) {
   /**
    * Transition Function
    */
-  this.transitionFunc_ = tFunc;
+  this.transitionFunc = null;
 
   /**
    * Animation counter for this node visit.
@@ -100,7 +99,7 @@ AccessScene.prototype.handleInterval = function() {
   this.drawInternal_();
   this.count_++;
   if (this.count_ > this.strings_.length) {
-    this.transitionFunc_('repl');
+    this.transitionFunc('repl');
     this.count_ = 0;
     this.drawInternal_();
   }

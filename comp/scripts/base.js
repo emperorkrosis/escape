@@ -3,69 +3,53 @@
  */
 Game = function(id) {
   /**
-   * Set up the main canvases and screen buffer.
+   * The main canvas.
+   * @type {!HTMLCanvasElement}
    */
   this.mainCanvas_ = document.getElementById(id);;
 
   /**
-   * The canvas context object to draw using.
+   * The canvas context.
+   * @type{!CanvasRenderingContext2D}
    */
   this.mainContext_ = this.mainCanvas_.getContext('2d');
   this.mainContext_.imageSmoothingEnabled = false;
 
   /**
-   * All the states in the terminal state machine.
+   * All the states in the state machine.
+   * @type {!Object.<string, Scene>}
    */
   this.allScenes_ = {};
 
-  // Global representing the current state that the machine is in.
+  /**
+   * The current state that the machine is in.
+   * @type {Scene}
+   */
   this.currentScene_ = null;
 
   /**
    * Transition function.
+   * @type {!function(string)}
    */
-  var that = this;
+  var self = this;
   this.transitionFunc_ = function(name) {
-      that.transition_(name);
+      self.transition_(name);
     };
-
-  /**
-   * Whether we have started the state machine yet.
-   */
-  this.started_ = false;
-
-  // Add all the state machine states.
-  this.addScene_(new ScanScene(320, 200, this.transitionFunc_));
-  this.addScene_(new EyeBadScene(320, 200, this.transitionFunc_, false));
-  this.addScene_(new DeniedScene(320, 200, this.transitionFunc_, 'denied1',
-      'scan'));
-  this.addScene_(new EyeBadScene(320, 200, this.transitionFunc_, true));
-  this.addScene_(new LoginScene(320, 200, this.transitionFunc_));
-  this.addScene_(new DeniedScene(320, 200, this.transitionFunc_, 'denied2',
-      'login'));
-  this.addScene_(new AccessScene(320, 200, this.transitionFunc_));
-  this.addScene_(new ReplicantScene(320, 200, this.transitionFunc_,
-      Constants.START_STATE));
 };
 
 
 /**
- * Start all the event loop running.
+ * Start all the event loops running. Should only be called once.
+ * @param name The name of the start state.
  */
-Game.prototype.start = function() {
-  // Only allow us to start once.
-  if (this.started_) {
-    return;
-  }
-  this.started_ = true;
-
+Game.prototype.start = function(name) {
   // Transition that state machine to the initial screen.
-  this.transition_(Constants.START_STATE);
+  this.transition_(name);
 
   // Set up user input handling for scenes.
-  var that = this;
+  var self = this;
   window.onkeydown = function(e) {
-      if (that.currentScene_.handleKeyDown(e)) {
+      if (self.currentScene_.handleKeyDown(e)) {
         e.preventDefault();
         e.stopPropagation();
       }
@@ -73,28 +57,30 @@ Game.prototype.start = function() {
 
   // Set up interval timer for scenes.
   window.setInterval(function() {
-      that.currentScene_.handleInterval();
+      self.currentScene_.handleInterval();
     }, 100);
 
   // Start drawing render loop.
   window.requestAnimationFrame(function() {
-      that.redraw_();
+      self.redraw_();
     });
-};
-
-
-/**
- * Static helper function to transitioning between scenes.
- * @param {string} name The scene name to transition to.
- */
-Game.prototype.addScene_ = function(scene) {
-  this.allScenes_[scene.getName()] = scene;
 };
 
 
 /**
  * Helper for adding scenes to the state machine.
  * @param {!Scene} scene The scene to add.
+ */
+Game.prototype.addScene = function(scene) {
+  scene.transitionFunc = this.transitionFunc_;
+  this.allScenes_[scene.getName()] = scene;
+};
+
+
+/**
+ * Helper for transitioning between scenes of the state machine.
+ * @param {string} name The name of the scene to transition to.
+ * @private
  */
 Game.prototype.transition_ = function(name) {
   if (this.allScenes_[name]) {
@@ -104,7 +90,8 @@ Game.prototype.transition_ = function(name) {
 
 
 /**
- * Redraw the main canvas.
+ * Redraw the main canvas, applying all the appropriate effects.
+ * @private
  */
 Game.prototype.redraw_ = function() {
   // Redraw the screen if dirty.
@@ -118,16 +105,15 @@ Game.prototype.redraw_ = function() {
   this.applyGlitch_();
   this.drawScanlineOverlay_();
 
-  var that = this;
+  var self = this;
   window.requestAnimationFrame(function() {
-    that.redraw_();
+    self.redraw_();
   });
 }
 
 
 /**
- * Helper to apply a transform to the screen before drawing the
- * buffer to it.
+ * Helper to apply a transform to the screen before drawing the buffer to it.
  * @private
  */
 Game.prototype.applyTransform_ = function() {
