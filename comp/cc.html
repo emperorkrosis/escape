@@ -1,0 +1,143 @@
+<html>
+<head>
+<title>Command and Control: Login Computer</title>
+<script>
+// Here are all the signals we care about.
+var fields = ['img', 'name', 'dob', 'doe', 'ret', 'hat'];
+
+// Used to only send changed fields.
+var lastData = null;
+
+
+// Main entry point.
+function refresh() {
+  sendSignalXhr();
+  sendRepXhr();
+}
+
+
+// Send the XHR to get the signals from the server.
+function sendSignalXhr() {
+  var url = '/signal';
+  var first = true;
+  for (var i = 0; i < fields.length; i++) {
+    var el = document.getElementById(fields[i]);
+    if (el) {
+      var val = encodeURIComponent(el.value);
+      if (lastData != null && val != lastData[fields[i]]) {
+        url += ((first) ? '?' : '&') + fields[i] + '=' + val;
+        first = false;
+      }
+    }
+  }
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('get', url, true);
+  var self = this;
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+      lastData = JSON.parse(xhr.responseText);
+      handleSignalResponse(lastData);
+    }
+  };
+  xhr.send();
+}
+
+
+// Handle the XHR response we get from the signal XHR.
+function handleSignalResponse(data) {
+  for (var key in data) {
+    addTextArea(key, decodeURIComponent(data[key]));
+  }
+}
+
+
+// Maybe add a new text area based on the signal response, or just update the
+// existing text area.
+function addTextArea(name, val) {
+  var el = document.getElementById(name);
+  if (!el) {
+    var outerDivEl = document.createElement('div');
+
+    var nameSpanEl = document.createElement('span');
+    nameSpanEl.innerHTML = name + ':';
+    outerDivEl.appendChild(nameSpanEl);
+
+    el = document.createElement('input');
+    el.setAttribute('type', 'text');
+    el.id = name;
+    outerDivEl.appendChild(el);
+
+    var signalsEl = document.getElementById('signals');
+    signalsEl.appendChild(outerDivEl);
+  }
+  el.value = val;
+}
+
+
+// Send XHR to get all the replicant images.
+function sendRepXhr() {
+  var url = '/rep';
+  var xhr = new XMLHttpRequest();
+  xhr.open('get', url, true);
+  var self = this;
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+      handleRepResponse(JSON.parse(xhr.responseText));
+    }
+  };
+  xhr.send();
+}
+
+// Handle getting back the array of replicant images.
+function handleRepResponse(data) {
+  for (var i = 0; i < data.length; i++) {
+    addImageElement(data[i]);
+  } 
+}
+
+
+// Add a replicant image element.
+function addImageElement(src) {
+  var s = src;
+  var outerDivEl = document.createElement('div');
+  outerDivEl.onclick = function() {
+    var el = document.getElementById('img');
+    if (el) {
+      el.value = s;
+    }
+  };
+
+  var nameDivEl = document.createElement('div');
+  nameDivEl.innerHTML = s;
+  outerDivEl.appendChild(nameDivEl);
+
+  var imgDivEl = document.createElement('div');
+  var imgEl = document.createElement('img');
+  imgEl.src = src;
+  imgDivEl.appendChild(imgEl);
+  outerDivEl.appendChild(imgDivEl);
+
+  var imagesEl = document.getElementById('images');
+  imagesEl.appendChild(outerDivEl);
+}
+</script>
+<style>
+span {
+  display: inline-block;
+  width: 50px;
+  margin: 5px 5px 10px 10px;
+}
+</style>
+</head>
+<body>
+<h1>Command and Control: Login Screen</h1>
+<div id="signals"></div>
+<div style="display: inline-block; width: 100px; height: 50px; border: 1px solid black;" onclick="sendSignalXhr();">Refresh</div>
+<div id="images"></div>
+<script>
+refresh();
+</script>
+</div>
+</body>
+</html>

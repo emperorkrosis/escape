@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>Test</title>
+<!-- Constants must be first so they are available to all scripts. -->
+<script src="scripts/constants.js"></script>
+<!-- Begin state definitions. -->
+<script src="scripts/scan.js"></script>
+<script src="scripts/eyeb.js"></script>
+<script src="scripts/login.js"></script>
+<script src="scripts/denied.js"></script>
+<script src="scripts/access.js"></script>
+<script src="scripts/repl.js"></script>
+<!-- End state definitions. -->
+<!-- Base should be last since it is the entry point for the app. -->
+<script src="scripts/base.js"></script>
+<style>
+body {
+  background: #000;
+  margin: 0;
+}
+
+#a {
+  width: 100vw;
+  height: 75vw;
+  background: black;
+  max-height: 100vh;
+  max-width: 133.33vh;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+</style>
+</head>
+<body>
+<div style="overflow: hidden; display: inline-block;">
+<canvas id="a" width="800" height="600"></canvas>
+</div>
+<script>
+//start('a');
+var g = new Game();
+g.start('a');
+</script>
+</body>
+</html>
